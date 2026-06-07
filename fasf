@@ -16,6 +16,8 @@ local COLOR_TEXT    = Color3.fromRGB(255, 255, 255)
 local COLOR_ON      = Color3.fromRGB(80, 190, 110)
 local COLOR_OFF     = Color3.fromRGB(70, 70, 76)
 local COLOR_CLOSE   = Color3.fromRGB(190, 60, 60)
+local COLOR_FROZEN  = Color3.fromRGB(90, 160, 230) -- голубой "заморожено"
+local COLOR_INACTIVE= Color3.fromRGB(120, 120, 128)
 local FONT          = Enum.Font.FredokaOne -- скруглённый шрифт (аналог NextExit Rounded)
 
 -- ScreenGui
@@ -192,6 +194,46 @@ local knobCorner = Instance.new("UICorner")
 knobCorner.CornerRadius = UDim.new(1, 0)
 knobCorner.Parent = knob
 
+-- Индикатор статуса (внизу окна)
+local statusBar = Instance.new("Frame")
+statusBar.Name = "StatusBar"
+statusBar.AnchorPoint = Vector2.new(0.5, 1)
+statusBar.Position = UDim2.new(0.5, 0, 1, -4)
+statusBar.Size = UDim2.new(1, 0, 0, 40)
+statusBar.BackgroundColor3 = COLOR_ELEM
+statusBar.BorderSizePixel = 0
+statusBar.Parent = content
+
+local statusCorner = Instance.new("UICorner")
+statusCorner.CornerRadius = UDim.new(0, 10)
+statusCorner.Parent = statusBar
+
+-- Цветная точка-индикатор
+local statusDot = Instance.new("Frame")
+statusDot.Name = "Dot"
+statusDot.Size = UDim2.new(0, 12, 0, 12)
+statusDot.Position = UDim2.new(0, 14, 0.5, -6)
+statusDot.BackgroundColor3 = COLOR_INACTIVE
+statusDot.BorderSizePixel = 0
+statusDot.Parent = statusBar
+
+local dotCorner = Instance.new("UICorner")
+dotCorner.CornerRadius = UDim.new(1, 0)
+dotCorner.Parent = statusDot
+
+-- Текст статуса
+local statusText = Instance.new("TextLabel")
+statusText.Name = "StatusText"
+statusText.Size = UDim2.new(1, -40, 1, 0)
+statusText.Position = UDim2.new(0, 34, 0, 0)
+statusText.BackgroundTransparency = 1
+statusText.Text = "Трейд активен"
+statusText.TextColor3 = COLOR_TEXT
+statusText.TextXAlignment = Enum.TextXAlignment.Left
+statusText.Font = FONT
+statusText.TextSize = 16
+statusText.Parent = statusBar
+
 -- Логика переключателя
 local freezeEnabled = false
 local TWEEN = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
@@ -201,9 +243,15 @@ toggleFrame.MouseButton1Click:Connect(function()
 	if freezeEnabled then
 		TweenService:Create(toggleFrame, TWEEN, {BackgroundColor3 = COLOR_ON}):Play()
 		TweenService:Create(knob, TWEEN, {Position = UDim2.new(1, -22, 0.5, -10)}):Play()
+		-- индикатор: заморожено
+		TweenService:Create(statusDot, TWEEN, {BackgroundColor3 = COLOR_FROZEN}):Play()
+		statusText.Text = "❄️ Трейд заморожен"
 	else
 		TweenService:Create(toggleFrame, TWEEN, {BackgroundColor3 = COLOR_OFF}):Play()
 		TweenService:Create(knob, TWEEN, {Position = UDim2.new(0, 2, 0.5, -10)}):Play()
+		-- индикатор: активен
+		TweenService:Create(statusDot, TWEEN, {BackgroundColor3 = COLOR_INACTIVE}):Play()
+		statusText.Text = "Трейд активен"
 	end
 
 	-- >>> Здесь твоя логика <
