@@ -1,5 +1,5 @@
 -- Trades v3.3
--- Чистый UI-скрипт с анимацией, перетаскиванием, сворачиванием и закрытием
+-- Тёмная тема, перетаскивание, сворачивание и закрытие с анимацией
 
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -8,13 +8,14 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- Цвета
-local COLOR_BG      = Color3.fromRGB(45, 45, 50)
-local COLOR_HEADER  = Color3.fromRGB(60, 60, 66)
-local COLOR_ELEM    = Color3.fromRGB(70, 70, 76)
+-- Цвета (тёмная тема)
+local COLOR_BG      = Color3.fromRGB(28, 28, 32)
+local COLOR_HEADER  = Color3.fromRGB(38, 38, 43)
+local COLOR_ELEM    = Color3.fromRGB(48, 48, 54)
 local COLOR_TEXT    = Color3.fromRGB(255, 255, 255)
-local COLOR_ON      = Color3.fromRGB(90, 200, 120)
-local COLOR_OFF     = Color3.fromRGB(90, 90, 96)
+local COLOR_ON      = Color3.fromRGB(80, 190, 110)
+local COLOR_OFF     = Color3.fromRGB(70, 70, 76)
+local COLOR_CLOSE   = Color3.fromRGB(190, 60, 60)
 local FONT          = Enum.Font.FredokaOne -- скруглённый шрифт (аналог NextExit Rounded)
 
 -- ScreenGui
@@ -46,7 +47,7 @@ shadow.Size = UDim2.new(1, 40, 1, 40)
 shadow.BackgroundTransparency = 1
 shadow.Image = "rbxassetid://5554236805"
 shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
-shadow.ImageTransparency = 0.5
+shadow.ImageTransparency = 0.45
 shadow.ScaleType = Enum.ScaleType.Slice
 shadow.SliceCenter = Rect.new(23, 23, 277, 277)
 shadow.ZIndex = 0
@@ -101,22 +102,37 @@ local minCorner = Instance.new("UICorner")
 minCorner.CornerRadius = UDim.new(0, 8)
 minCorner.Parent = minimizeBtn
 
--- Кнопка закрытия
+-- Кнопка закрытия (крестик нарисован двумя полосками — отображается всегда)
 local closeBtn = Instance.new("TextButton")
 closeBtn.Name = "Close"
 closeBtn.Size = UDim2.new(0, 28, 0, 28)
 closeBtn.Position = UDim2.new(1, -34, 0.5, -14)
-closeBtn.BackgroundColor3 = Color3.fromRGB(200, 70, 70)
-closeBtn.Text = "✕"
-closeBtn.TextColor3 = COLOR_TEXT
-closeBtn.Font = FONT
-closeBtn.TextSize = 16
+closeBtn.BackgroundColor3 = COLOR_CLOSE
+closeBtn.Text = ""
 closeBtn.AutoButtonColor = true
 closeBtn.Parent = header
 
 local closeCorner = Instance.new("UICorner")
 closeCorner.CornerRadius = UDim.new(0, 8)
 closeCorner.Parent = closeBtn
+
+-- Рисуем крестик из двух наклонных полосок
+local function makeCrossBar(rot)
+	local bar = Instance.new("Frame")
+	bar.Size = UDim2.new(0, 14, 0, 2)
+	bar.AnchorPoint = Vector2.new(0.5, 0.5)
+	bar.Position = UDim2.new(0.5, 0, 0.5, 0)
+	bar.BackgroundColor3 = COLOR_TEXT
+	bar.BorderSizePixel = 0
+	bar.Rotation = rot
+	bar.Parent = closeBtn
+	local c = Instance.new("UICorner")
+	c.CornerRadius = UDim.new(1, 0)
+	c.Parent = bar
+	return bar
+end
+makeCrossBar(45)
+makeCrossBar(-45)
 
 -- Контейнер содержимого
 local content = Instance.new("Frame")
@@ -143,7 +159,7 @@ local rowLabel = Instance.new("TextLabel")
 rowLabel.Size = UDim2.new(1, -70, 1, 0)
 rowLabel.Position = UDim2.new(0, 14, 0, 0)
 rowLabel.BackgroundTransparency = 1
-rowLabel.Text = "Freeze Trade"
+rowLabel.Text = "❄️ Freeze Trade"
 rowLabel.TextColor3 = COLOR_TEXT
 rowLabel.TextXAlignment = Enum.TextXAlignment.Left
 rowLabel.Font = FONT
