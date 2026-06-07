@@ -16,6 +16,7 @@ local COLOR_TEXT    = Color3.fromRGB(255, 255, 255)
 local COLOR_ON      = Color3.fromRGB(80, 190, 110)
 local COLOR_OFF     = Color3.fromRGB(70, 70, 76)
 local COLOR_CLOSE   = Color3.fromRGB(190, 60, 60)
+local COLOR_FROZEN  = Color3.fromRGB(90, 170, 240)
 local FONT          = Enum.Font.FredokaOne -- скруглённый шрифт (аналог NextExit Rounded)
 
 -- ScreenGui
@@ -193,27 +194,14 @@ knobCorner.CornerRadius = UDim.new(1, 0)
 knobCorner.Parent = knob
 
 -- Индикатор статуса (левый нижний угол)
-local statusDot = Instance.new("Frame")
-statusDot.Name = "StatusDot"
-statusDot.Size = UDim2.new(0, 8, 0, 8)
-statusDot.Position = UDim2.new(0, 2, 1, -16)
-statusDot.AnchorPoint = Vector2.new(0, 0.5)
-statusDot.BackgroundColor3 = COLOR_CLOSE
-statusDot.BorderSizePixel = 0
-statusDot.Parent = content
-
-local statusDotCorner = Instance.new("UICorner")
-statusDotCorner.CornerRadius = UDim.new(1, 0)
-statusDotCorner.Parent = statusDot
-
 local statusLabel = Instance.new("TextLabel")
 statusLabel.Name = "StatusLabel"
 statusLabel.Size = UDim2.new(0, 200, 0, 14)
-statusLabel.Position = UDim2.new(0, 16, 1, -16)
+statusLabel.Position = UDim2.new(0, 4, 1, -14)
 statusLabel.AnchorPoint = Vector2.new(0, 0.5)
 statusLabel.BackgroundTransparency = 1
-statusLabel.Text = "Trade Active"
-statusLabel.TextColor3 = Color3.fromRGB(170, 170, 175)
+statusLabel.Text = "Ready"
+statusLabel.TextColor3 = COLOR_ON
 statusLabel.TextXAlignment = Enum.TextXAlignment.Left
 statusLabel.Font = Enum.Font.Gotham
 statusLabel.TextSize = 12
@@ -228,13 +216,13 @@ toggleFrame.MouseButton1Click:Connect(function()
 	if freezeEnabled then
 		TweenService:Create(toggleFrame, TWEEN, {BackgroundColor3 = COLOR_ON}):Play()
 		TweenService:Create(knob, TWEEN, {Position = UDim2.new(1, -22, 0.5, -10)}):Play()
-		TweenService:Create(statusDot, TWEEN, {BackgroundColor3 = COLOR_ON}):Play()
+		TweenService:Create(statusLabel, TWEEN, {TextColor3 = COLOR_FROZEN}):Play()
 		statusLabel.Text = "Trade Frozen"
 	else
 		TweenService:Create(toggleFrame, TWEEN, {BackgroundColor3 = COLOR_OFF}):Play()
 		TweenService:Create(knob, TWEEN, {Position = UDim2.new(0, 2, 0.5, -10)}):Play()
-		TweenService:Create(statusDot, TWEEN, {BackgroundColor3 = COLOR_CLOSE}):Play()
-		statusLabel.Text = "Trade Active"
+		TweenService:Create(statusLabel, TWEEN, {TextColor3 = COLOR_ON}):Play()
+		statusLabel.Text = "Ready"
 	end
 
 	-- >>> Здесь твоя логика <
